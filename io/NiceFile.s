@@ -2,6 +2,7 @@
 .data
   msg: .ascii "Hello Worlds"
   fn: .ascii "Greeting2.txt"
+  buf: .quad 0
 
 .text
 .global _start
@@ -16,16 +17,28 @@ createFile: # filename top of stack, replaces it with fd
   push %rdx # restore return address
   ret
 
+writeFile:
+  pop %rdx # pop return address
+  mov %rdx, buf
+  pop %rbx # get fd, to rbx
+  pop %rcx # get msg, to rcx
+  mov $4, %rax # output text to file
+  mov $12, %rdx
+  int $0x80
+  mov buf, %rdx
+  push %rdx # restore return address
+  ret
+
 _start:
   mov $fn, %rbx
   push %rbx
   call createFile
   pop %rbx # get fd
-
-  mov $4, %rax # output text to file
   mov $msg, %rcx
-  mov $12, %rdx
-  int $0x80
+  push %rcx
+  push %rbx
+  call writeFile
+
   mov $1, %rax
   mov $0, %rbx
   int $0x80
