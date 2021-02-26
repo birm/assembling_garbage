@@ -25,7 +25,7 @@ writeFile:
   movq 24(%rbp), %rcx # get msg, to rcx
   movq 16(%rbp), %rbx # get fd, to rbx
   movq $4, %rax # output text to file
-  movq $12, %rdx
+  movq $19, %rdx
   int $0x80
   mov %rbp, %rsp # leave
   popq %rbp
@@ -37,9 +37,7 @@ _start:
   mov $fn, %rbx
   mov %rbx, (%rbp)
   call createFile
-  movq (%rbp), %rbx # get fd
-  movq $msg, 16(%rbp)
-  movq %rbx, 8(%rbp)
+  movq $msg, 8(%rbp)
   call writeFile
   movq $1, %rax
   movq $0, %rbx
